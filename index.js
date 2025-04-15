@@ -34,6 +34,24 @@ app.post('/users', async (req, res) => {
   }
 })
 
+app.post('/users/login', async (req, res) => {
+  const { usuario, senha } = req.body;
+
+  try {
+    const consulta = 'SELECT * FROM usuario WHERE usuario = $1 AND senha = $2';
+    const { rows } = await pool.query(consulta, [usuario, senha]);
+
+    if (rows.length > 0) {
+      res.status(200).json({ message: 'Acesso permitido' });
+    } else {
+      res.status(401).json({ message: 'Usuário ou senha incorretos' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao tentar logar', error: error.message });
+  }
+});
+
+
 app.get('/adm', async (req, res) => {
   try {
     const { rows } = await pool.query('SELECT * FROM admin') 
@@ -57,6 +75,24 @@ app.post('/adm', async (req, res) => {
     res.status(500).json({ message: 'Falha ao cadastrar usuário', error: error.message })
   }
 })
+
+app.post('/adm/login', async (req, res) => {
+  const { usuario, senha } = req.body;
+
+  try {
+    const consulta = 'SELECT * FROM admin WHERE usuario = $1 AND senha = $2';
+    const { rows } = await pool.query(consulta, [usuario, senha]);
+
+    if (rows.length > 0) {
+      res.status(200).json({ message: 'Acesso permitido' });
+    } else {
+      res.status(401).json({ message: 'Usuário ou senha incorretos' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao tentar logar', error: error.message });
+  }
+});
+
 
 
 
